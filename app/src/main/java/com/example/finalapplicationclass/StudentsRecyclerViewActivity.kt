@@ -49,10 +49,10 @@ class StudentsRecyclerViewActivity : AppCompatActivity() {
 
     class StudentViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
-        var nameTextView: TextView? = null
-        var idTextView: TextView? = null
-        var checkBox: CheckBox? = null
-        var student: Student? = null
+        private var nameTextView: TextView? = null
+        private var idTextView: TextView? = null
+        private var checkBox: CheckBox? = null
+        private var student: Student? = null
 
         init {
             nameTextView = itemView.findViewById(R.id.student_row_name_text_view)
