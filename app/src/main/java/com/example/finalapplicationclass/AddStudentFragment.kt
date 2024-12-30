@@ -5,55 +5,52 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [AddStudentFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class AddStudentFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var saveButton: Button? = null
+    private var cancelButton: Button? = null
+    private var nameEditText: EditText? = null
+    private var idEditText: EditText? = null
+    private var saveMessageTextView: TextView? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_student, container, false)
+        val view =  inflater.inflate(R.layout.fragment_add_student, container, false)
+
+        val saveButton: Button? = view?.findViewById(R.id.add_student_activity_save_button)
+        val cancelButton: Button? = view?.findViewById(R.id.add_student_activity_cancel_button)
+        val nameEditText: EditText? = view?.findViewById(R.id.add_student_activity_name_edit_text)
+        val idEditText: EditText? = view?.findViewById(R.id.add_student_activity_id_edit_text)
+        val saveMessageTextView: TextView? = view?.findViewById(R.id.add_student_activity_save_message_text_view)
+
+        setupView(view)
+        cancelButton?.setOnClickListener(::onCancelClick)
+        saveButton?.setOnClickListener(::onSaveClick)
+
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment AddStudentFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            AddStudentFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    private fun setupView(view: View) {
+        saveButton = view.findViewById(R.id.add_student_activity_save_button)
+        cancelButton = view.findViewById(R.id.add_student_activity_cancel_button)
+        nameEditText = view.findViewById(R.id.add_student_activity_name_edit_text)
+        idEditText = view.findViewById(R.id.add_student_activity_id_edit_text)
+        saveMessageTextView = view.findViewById(R.id.add_student_activity_save_message_text_view)
     }
+
+    private fun onCancelClick(view: View){
+        TODO()
+    }
+
+    private fun onSaveClick(view: View){
+        saveMessageTextView?.text = "${nameEditText?.text} ${idEditText?.text} is saved"
+    }
+
 }
