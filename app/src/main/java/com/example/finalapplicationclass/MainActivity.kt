@@ -11,6 +11,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,9 +31,7 @@ class MainActivity : AppCompatActivity() {
         // TODO: Step 2 - create nac_graph.xml and connect to nav host
         // TODO: Step 3 - Connect list fragment with blue fragment function
         // TODO: Step 4 - set navArgs for blue fragment
-        // TODO: Step 5 -
-        // TODO: Step 6 -
-        // TODO: Step 7 -
+
 
         val toolBar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolBar)
@@ -46,6 +45,9 @@ class MainActivity : AppCompatActivity() {
                 navController = it
             )
         }
+
+        val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_bar)
+        navController?.let { NavigationUI.setupWithNavController(bottomNavigationView, it) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
