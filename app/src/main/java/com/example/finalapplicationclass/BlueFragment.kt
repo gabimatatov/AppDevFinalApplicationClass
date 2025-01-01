@@ -5,8 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.core.os.bundleOf
+import androidx.navigation.Navigation
 
 class BlueFragment : Fragment() {
 
@@ -15,9 +17,11 @@ class BlueFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            title = it.getString(TITLE)
-        }
+
+        title = arguments?.let { BlueFragmentArgs.fromBundle(it).studentTitle }
+//        arguments?.let {
+//            title = it.getString("studentTitle")
+//        }
     }
 
     override fun onCreateView(
@@ -28,6 +32,10 @@ class BlueFragment : Fragment() {
         val view =  inflater.inflate(R.layout.fragment_blue, container, false)
         textView = view.findViewById(R.id.blue_fragment_text_view)
         textView?.text = title
+
+        view?.findViewById<Button>(R.id.blue_fragment_back_button)?.setOnClickListener {
+            Navigation.findNavController(view).popBackStack()
+        }
         return view
     }
 

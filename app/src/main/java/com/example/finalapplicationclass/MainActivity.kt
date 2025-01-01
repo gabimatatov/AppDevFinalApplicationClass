@@ -1,17 +1,19 @@
 package com.example.finalapplicationclass
 
-import android.content.Intent
 import android.os.Bundle
-import android.provider.Telephony.Mms.Intents
-import android.view.View
-import android.widget.Button
+import android.view.MenuItem
+import androidx.appcompat.widget.Toolbar
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
 
 class MainActivity : AppCompatActivity() {
+
+    var navController : NavController? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +33,26 @@ class MainActivity : AppCompatActivity() {
         // TODO: Step 6 -
         // TODO: Step 7 -
 
+        val toolBar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolBar)
+
+        val navHostController: NavHostFragment? = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as? NavHostFragment
+        navController = navHostController?.navController
+
+        navController?.let {
+            NavigationUI.setupActionBarWithNavController(
+                activity = this,
+                navController = it
+            )
+        }
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return if (item.itemId == android.R.id.home) {
+            navController?.popBackStack()
+            true
+        } else {
+            return super.onOptionsItemSelected(item)
+        }
     }
 }
 

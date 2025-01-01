@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.navigation.Navigation
+import androidx.navigation.ui.NavigationUI
 
 class AddStudentFragment : Fragment() {
 
@@ -46,7 +48,7 @@ class AddStudentFragment : Fragment() {
     }
 
     private fun onCancelClick(view: View){
-        TODO()
+        Navigation.findNavController(view).popBackStack()
     }
 
     private fun onSaveClick(view: View){

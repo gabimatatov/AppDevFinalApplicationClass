@@ -6,9 +6,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.finalapplicationclass.R
 import com.example.finalapplicationclass.model.Student
+import android.util.Log
+import com.example.finalapplicationclass.OnItemClickListener
+
+
 
 class StudentViewHolder(
     itemView: View,
+    listener: OnItemClickListener?
 ): RecyclerView.ViewHolder(itemView) {
 
     private var nameTextView: TextView? = null
@@ -27,6 +32,10 @@ class StudentViewHolder(
                     student?.isChecked = (view as? CheckBox)?.isChecked ?: false
                 }
             }
+        }
+        itemView.setOnClickListener {
+            Log.d("TAG", "On click listener on position $adapterPosition")
+            listener?.onItemClick(student)
         }
     }
 

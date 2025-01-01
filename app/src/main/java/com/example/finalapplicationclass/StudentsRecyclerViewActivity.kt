@@ -12,6 +12,11 @@ import com.example.finalapplicationclass.model.Student
 import com.example.finalapplicationclass.adapter.StudentsRecyclerAdapter
 
 
+interface OnItemClickListener {
+    fun onItemClick(position: Int)
+    fun onItemClick(student: Student?)
+}
+
 class StudentsRecyclerViewActivity : AppCompatActivity() {
 
     var students: MutableList<Student>? = null
