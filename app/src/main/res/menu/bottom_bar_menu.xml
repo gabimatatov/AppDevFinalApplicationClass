@@ -3,8 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/addStudentFragment"
+        android:icon="@android:drawable/btn_star_big_on"
+        android:title="List" />
+    <item
         android:icon="@android:drawable/ic_input_add"
-        android:title="Add"
-        app:showAsAction="always" />
+        android:title="Add" />
+    <item
+        android:icon="@drawable/hacker"
+        android:title="Profile" />
 </menu>

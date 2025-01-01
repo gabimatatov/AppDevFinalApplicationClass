@@ -59,12 +59,11 @@ class MainActivity : AppCompatActivity() {
                 navController?.popBackStack()
                 true
             }
-            item.itemId == R.id.main_menu_add -> {
-                navController?.navigate(R.id.action_global_addStudentFragment)
-                true
-            }
             else -> {
-                return super.onOptionsItemSelected(item)
+                navController?.let {
+                    NavigationUI.onNavDestinationSelected(item, it)
+                }
+                true
             }
         }
     }
