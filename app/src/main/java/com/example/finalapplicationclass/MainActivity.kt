@@ -1,6 +1,7 @@
 package com.example.finalapplicationclass
 
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
 import androidx.activity.enableEdgeToEdge
@@ -46,12 +47,25 @@ class MainActivity : AppCompatActivity() {
             )
         }
     }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return if (item.itemId == android.R.id.home) {
-            navController?.popBackStack()
-            true
-        } else {
-            return super.onOptionsItemSelected(item)
+        return when {
+            item.itemId == android.R.id.home -> {
+                navController?.popBackStack()
+                true
+            }
+            item.itemId == R.id.main_menu_add -> {
+                navController?.navigate(R.id.action_global_addStudentFragment)
+                true
+            }
+            else -> {
+                return super.onOptionsItemSelected(item)
+            }
         }
     }
 }
