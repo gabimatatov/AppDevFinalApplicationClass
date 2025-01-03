@@ -6,12 +6,12 @@ import androidx.room.RoomDatabase
 import com.example.finalapplicationclass.base.MyApplication
 import com.example.finalapplicationclass.model.Student
 
-@Database(entities = [Student::class], version = 1)
+@Database(entities = [Student::class], version = 2)
 abstract class AppLocalDBRepository : RoomDatabase() {
     abstract fun studentDao(): StudentDao
 }
 
-class AppLocalDB {
+object AppLocalDB {
     val database: AppLocalDBRepository by lazy {
 
         val context = MyApplication.Globals.context ?: throw IllegalStateException("Application context is missing")

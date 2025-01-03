@@ -7,64 +7,66 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
 import androidx.navigation.Navigation
-import androidx.navigation.ui.NavigationUI
+import com.example.finalapplicationclass.databinding.FragmentAddStudentBinding
+import com.example.finalapplicationclass.model.Model
+import com.example.finalapplicationclass.model.Student
 
 class AddStudentFragment : Fragment() {
 
-    private var saveButton: Button? = null
-    private var cancelButton: Button? = null
-    private var nameEditText: EditText? = null
-    private var idEditText: EditText? = null
-    private var saveMessageTextView: TextView? = null
+    private var binding: FragmentAddStudentBinding? = null
 
+    // On Create View
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        val view =  inflater.inflate(R.layout.fragment_add_student, container, false)
+        binding = FragmentAddStudentBinding.inflate(inflater, container, false)
 
-        val saveButton: Button? = view?.findViewById(R.id.add_student_activity_save_button)
-        val cancelButton: Button? = view?.findViewById(R.id.add_student_activity_cancel_button)
-        val nameEditText: EditText? = view?.findViewById(R.id.add_student_activity_name_edit_text)
-        val idEditText: EditText? = view?.findViewById(R.id.add_student_activity_id_edit_text)
-        val saveMessageTextView: TextView? = view?.findViewById(R.id.add_student_activity_save_message_text_view)
+        binding?.cancelButton?.setOnClickListener(::onCancelClick)
+        binding?.saveButton?.setOnClickListener(::onSaveClick)
 
-        setupView(view)
-        cancelButton?.setOnClickListener(::onCancelClick)
-        saveButton?.setOnClickListener(::onSaveClick)
-
-        return view
+        return binding?.root
     }
 
+    // On Destroy
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = null
+    }
+
+    // On Create
     override fun onCreate(savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
         super.onCreate(savedInstanceState)
     }
 
+    // On Create Options Menu
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    private fun setupView(view: View) {
-        saveButton = view.findViewById(R.id.add_student_activity_save_button)
-        cancelButton = view.findViewById(R.id.add_student_activity_cancel_button)
-        nameEditText = view.findViewById(R.id.add_student_activity_name_edit_text)
-        idEditText = view.findViewById(R.id.add_student_activity_id_edit_text)
-        saveMessageTextView = view.findViewById(R.id.add_student_activity_save_message_text_view)
-    }
-
+    // On Cancel Click
     private fun onCancelClick(view: View){
         Navigation.findNavController(view).popBackStack()
     }
 
+    // On Save Click
     private fun onSaveClick(view: View){
-        saveMessageTextView?.text = "${nameEditText?.text} ${idEditText?.text} is saved"
-    }
+        binding?.saveMessageTextView?.text = "${binding?.nameEditText?.text} ${binding?.idEditText?.text} is saved"
+        val student = Student(
+            name = binding?.nameEditText?.text?.toString() ?: "",
+            id = binding?.idEditText?.text?.toString() ?: "",
+            avatarUrl = "",
+            isChecked = false
+        )
 
+        binding?.progressBar?.visibility = View.VISIBLE
+
+        Model.shared.add(student) {
+            binding?.progressBar?.visibility = View.GONE
+            Navigation.findNavController(view).popBackStack()
+        }
+    }
 }

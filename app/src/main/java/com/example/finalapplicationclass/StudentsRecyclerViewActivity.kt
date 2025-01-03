@@ -35,14 +35,14 @@ class StudentsRecyclerViewActivity : AppCompatActivity() {
         // TODO: 2. Create Adapter ✅
         // TODO: 3. Create ViewHolder ✅
 
-        students = Model.shared.students
-        val recyclerView: RecyclerView = findViewById(R.id.students_list_activity_recycler_view)
-        recyclerView.setHasFixedSize(true)
-
-        val layoutManager = LinearLayoutManager(this)
-        recyclerView.layoutManager = layoutManager
-
-        val adapter = StudentsRecyclerAdapter(students)
-        recyclerView.adapter = adapter
+//        students = Model.shared.students
+//        val recyclerView: RecyclerView = findViewById(R.id.students_list_activity_recycler_view)
+//        recyclerView.setHasFixedSize(true)
+//
+//        val layoutManager = LinearLayoutManager(this)
+//        recyclerView.layoutManager = layoutManager
+//
+//        val adapter = StudentsRecyclerAdapter(students)
+//        recyclerView.adapter = adapter
     }
 }

@@ -7,9 +7,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.finalapplicationclass.R
 import com.example.finalapplicationclass.model.Student
 
-class StudentsRecyclerAdapter(private val students: List<Student>?): RecyclerView.Adapter<StudentViewHolder>() {
+class StudentsRecyclerAdapter(private var students: List<Student>?): RecyclerView.Adapter<StudentViewHolder>() {
 
     var listener: OnItemClickListener? = null
+
+    fun set(students: List<Student>?) {
+        this.students = students
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudentViewHolder {
         val inflation = LayoutInflater.from(parent.context)
