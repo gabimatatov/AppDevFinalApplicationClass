@@ -1,5 +1,6 @@
 package com.example.finalapplicationclass
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -34,6 +35,7 @@ class MainActivity : AppCompatActivity() {
 
 
         val toolBar: Toolbar = findViewById(R.id.toolbar)
+        toolBar.setBackgroundColor(Color.parseColor("#333333"))
         setSupportActionBar(toolBar)
 
         val navHostController: NavHostFragment? = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as? NavHostFragment
@@ -48,6 +50,7 @@ class MainActivity : AppCompatActivity() {
 
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_bar)
         navController?.let { NavigationUI.setupWithNavController(bottomNavigationView, it) }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
