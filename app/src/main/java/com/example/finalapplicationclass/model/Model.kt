@@ -1,10 +1,7 @@
 package com.example.finalapplicationclass.model
 
-import android.os.Looper
-import androidx.core.os.HandlerCompat
-import com.example.finalapplicationclass.model.dao.AppLocalDB
-import com.example.finalapplicationclass.model.dao.AppLocalDBRepository
-import java.util.concurrent.Executors
+import android.graphics.Bitmap
+import android.media.Image
 
 typealias StudentsCallback = (List<Student>) -> Unit
 typealias EmptyCallback = () -> Unit
@@ -18,15 +15,13 @@ interface GetAllStudentsListener {
 2. Set and Get - Done
 3. Integrate FireStore - Done
 4. Integrate Students - Done
+5. Integrate Storage
 */
 
 class Model private constructor(){
 
-    private val database: AppLocalDBRepository = AppLocalDB.database
-    private val executor =  Executors.newSingleThreadExecutor()
-    private val mainHandler = HandlerCompat.createAsync(Looper.getMainLooper())
-
     private val firebaseModel = FirebaseModel()
+    private val cloudinaryModel = CloudinaryModel()
 
     companion object {
         val shared = Model()
@@ -34,38 +29,28 @@ class Model private constructor(){
 
     fun getAllStudents(callback: StudentsCallback) {
         firebaseModel.getAllStudents(callback)
-//        executor.execute {
-//            val students = database.studentDao().getAllStudents()
-//            Thread.sleep(4000)
-//            mainHandler.post {
-//                callback(students)
-//            }
-//        }
     }
 
-    fun add(student: Student, callback: EmptyCallback) {
-
-        firebaseModel.add(student, callback)
-
-//        executor.execute {
-//            database.studentDao().insertStudents(student)
-//            Thread.sleep(4000)
-//            mainHandler.post {
-//                callback()
-//            }
-//        }
+    fun add(student: Student, image: Bitmap?, callback: EmptyCallback) {
+        firebaseModel.add(student) {
+            image?.let {
+                uploadImageToFirebase(it, student.id){ uri ->
+                    if (!uri.isNullOrBlank()){
+                        val st = student.copy(avatarUrl = uri)
+                        firebaseModel.add(st, callback)
+                    } else {
+                        callback()
+                    }
+                }
+            } ?: callback()
+        }
     }
 
     fun delete(student: Student, callback: EmptyCallback) {
-
         firebaseModel.delete(student, callback)
+    }
 
-//        executor.execute {
-//            database.studentDao().delete(student)
-//            Thread.sleep(4000)
-//            mainHandler.post {
-//                callback()
-//            }
-//        }
+    fun uploadImageToFirebase(image: Bitmap, name: String, callback: (String?) -> Unit) {
+        firebaseModel.uploadImage(image, name, callback)
     }
 }

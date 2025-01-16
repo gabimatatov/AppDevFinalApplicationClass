@@ -1,32 +1,24 @@
 package com.example.finalapplicationclass.adapter
 
-import android.view.View
 import android.widget.CheckBox
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.finalapplicationclass.R
 import com.example.finalapplicationclass.model.Student
 import android.util.Log
 import com.example.finalapplicationclass.OnItemClickListener
-
+import com.example.finalapplicationclass.databinding.StudentListRowBinding
+import com.squareup.picasso.Picasso
+import com.example.finalapplicationclass.R
 
 
 class StudentViewHolder(
-    itemView: View,
+    private val binding: StudentListRowBinding,
     listener: OnItemClickListener?
-): RecyclerView.ViewHolder(itemView) {
+): RecyclerView.ViewHolder(binding.root) {
 
-    private var nameTextView: TextView? = null
-    private var idTextView: TextView? = null
-    private var checkBox: CheckBox? = null
     private var student: Student? = null
 
     init {
-        nameTextView = itemView.findViewById(R.id.student_row_name_text_view)
-        idTextView = itemView.findViewById(R.id.student_row_id_text_view)
-        checkBox = itemView.findViewById(R.id.student_row_check_box)
-
-        checkBox?.apply {
+        binding.checkBox.apply {
             setOnClickListener { view ->
                 (tag as? Int)?.let { tag ->
                     student?.isChecked = (view as? CheckBox)?.isChecked ?: false
@@ -41,11 +33,19 @@ class StudentViewHolder(
 
     fun bind(student: Student?, position: Int) {
         this.student = student
-        nameTextView?.text = student?.name
-        idTextView?.text = student?.id
-        checkBox?.apply {
+        binding.nameTextView.text = student?.name
+        binding.idTextView.text = student?.id
+        binding.checkBox.apply {
             isChecked = student?.isChecked ?: false
             tag = position
+        }
+
+        student?.avatarUrl?.let { avatarUrl ->
+            val url = avatarUrl.ifBlank { return }
+            Picasso.get()
+                .load(url)
+                .placeholder(R.drawable.hacker)
+                .into(binding.imageView)
         }
     }
 }

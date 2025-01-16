@@ -4,8 +4,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.finalapplicationclass.OnItemClickListener
 import androidx.recyclerview.widget.RecyclerView
-import com.example.finalapplicationclass.R
 import com.example.finalapplicationclass.model.Student
+import com.example.finalapplicationclass.databinding.StudentListRowBinding
+
 
 class StudentsRecyclerAdapter(private var students: List<Student>?): RecyclerView.Adapter<StudentViewHolder>() {
 
@@ -16,13 +17,9 @@ class StudentsRecyclerAdapter(private var students: List<Student>?): RecyclerVie
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudentViewHolder {
-        val inflation = LayoutInflater.from(parent.context)
-        val view = inflation.inflate(
-            R.layout.student_list_row,
-            parent,
-            false
-        )
-        return StudentViewHolder(view, listener)
+        val inflater = LayoutInflater.from(parent.context)
+        var binding = StudentListRowBinding.inflate(inflater, parent, false)
+        return StudentViewHolder(binding, listener)
     }
 
     override fun getItemCount(): Int = students?.size ?: 0
