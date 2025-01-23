@@ -1,5 +1,6 @@
 package com.example.finalapplicationclass
 
+import android.content.Context
 import android.media.Image
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ProgressBar
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,11 +23,15 @@ import com.example.finalapplicationclass.model.Student
 
 class StudentsListFragment : Fragment() {
 
-    var students: List<Student>? = null
     private var adapter : StudentsRecyclerAdapter? = null
-
-
     private var binding: FragmentStudentsListBinding? = null
+    private var viewModel: StudentsListVIewModel? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        viewModel = ViewModelProvider(this)[StudentsListVIewModel::class.java]
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,7 +50,7 @@ class StudentsListFragment : Fragment() {
         val layoutManager = LinearLayoutManager(context)
         binding?.recyclerView?.layoutManager = layoutManager
 
-        adapter = StudentsRecyclerAdapter(students)
+        adapter = StudentsRecyclerAdapter(viewModel?.students)
 
         adapter?.listener = object : OnItemClickListener {
             override fun onItemClick(position: Int) {
@@ -61,13 +68,13 @@ class StudentsListFragment : Fragment() {
             }
         }
 
-
         binding?.recyclerView?.adapter = adapter
         val action = StudentsListFragmentDirections.actionGlobalAddStudentFragment()
         binding?.addStudentButton?.setOnClickListener(Navigation.createNavigateOnClickListener(action))
 
         return binding?.root
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -84,7 +91,7 @@ class StudentsListFragment : Fragment() {
         binding?.progressBar?.visibility = View.VISIBLE
 
         Model.shared.getAllStudents {
-            this.students = it
+            viewModel?.set(students = it)
             adapter?.set(it)
             adapter?.notifyDataSetChanged()
 
