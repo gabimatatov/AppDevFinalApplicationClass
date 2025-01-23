@@ -19,8 +19,8 @@ import com.example.finalapplicationclass.model.Student
 class AddStudentFragment : Fragment() {
 
     private var binding: FragmentAddStudentBinding? = null
-
     private var cameraLauncher: ActivityResultLauncher<Void?>? = null
+    private var didSetProfileImage = false
 
     // On Create View
     override fun onCreateView(
@@ -34,6 +34,7 @@ class AddStudentFragment : Fragment() {
 
         cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
             binding?.imageView?.setImageBitmap(bitmap)
+            didSetProfileImage = true
         }
 
         binding?.addPhotoButton?.setOnClickListener {
@@ -78,13 +79,22 @@ class AddStudentFragment : Fragment() {
 
         binding?.progressBar?.visibility = View.VISIBLE
 
-        binding?.imageView?.isDrawingCacheEnabled = true
-        binding?.imageView?.buildDrawingCache()
-        val bitmap = (binding?.imageView?.drawable as BitmapDrawable).bitmap
+        if(didSetProfileImage) {
+            binding?.imageView?.isDrawingCacheEnabled = true
+            binding?.imageView?.buildDrawingCache()
+            val bitmap = (binding?.imageView?.drawable as BitmapDrawable).bitmap
 
-        Model.shared.add(student, bitmap) {
-            binding?.progressBar?.visibility = View.GONE
-            Navigation.findNavController(view).popBackStack()
+            Model.shared.add(student, bitmap, Model.Storage.FIREBASE) {
+                binding?.progressBar?.visibility = View.GONE
+                Navigation.findNavController(view).popBackStack()
+            }
+        } else {
+            Model.shared.add(student, null, Model.Storage.FIREBASE) {
+                binding?.progressBar?.visibility = View.GONE
+                Navigation.findNavController(view).popBackStack()
+            }
         }
+
+
     }
 }

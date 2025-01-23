@@ -20,6 +20,11 @@ interface GetAllStudentsListener {
 
 class Model private constructor(){
 
+    enum class Storage {
+        FIREBASE,
+        CLOUDINARY
+    }
+
     private val firebaseModel = FirebaseModel()
     private val cloudinaryModel = CloudinaryModel()
 
@@ -31,18 +36,39 @@ class Model private constructor(){
         firebaseModel.getAllStudents(callback)
     }
 
-    fun add(student: Student, image: Bitmap?, callback: EmptyCallback) {
+    fun add(student: Student, image: Bitmap?, storage: Storage, callback: EmptyCallback) {
         firebaseModel.add(student) {
             image?.let {
-                uploadImageToFirebase(it, student.id){ uri ->
-                    if (!uri.isNullOrBlank()){
-                        val st = student.copy(avatarUrl = uri)
-                        firebaseModel.add(st, callback)
-                    } else {
-                        callback()
-                    }
-                }
+                uploadTo(
+                    storage,
+                    image = image,
+                    name = student.id,
+                    callback = { uri ->
+                        if (!uri.isNullOrBlank()) {
+                            val st = student.copy(avatarUrl = uri)
+                            firebaseModel.add(st, callback)
+                        } else {
+                            callback()
+                        }
+                    },
+                )
             } ?: callback()
+        }
+    }
+
+    private fun uploadTo(storage: Storage, image: Bitmap, name: String, callback: (String?) -> Unit) {
+        when (storage) {
+            Storage.FIREBASE -> {
+                uploadImageToFirebase(image, name, callback)
+            }
+            Storage.CLOUDINARY -> {
+                uploadImageToCloudinary(
+                    bitmap = image,
+                    name = name,
+                    onSuccess = callback,
+                    onError = { callback(null) }
+                )
+            }
         }
     }
 
@@ -50,7 +76,11 @@ class Model private constructor(){
         firebaseModel.delete(student, callback)
     }
 
-    fun uploadImageToFirebase(image: Bitmap, name: String, callback: (String?) -> Unit) {
+    private fun uploadImageToFirebase(image: Bitmap, name: String, callback: (String?) -> Unit) {
         firebaseModel.uploadImage(image, name, callback)
+    }
+
+    private fun uploadImageToCloudinary(bitmap: Bitmap, name: String, onSuccess: (String?) -> Unit, onError: (String?) -> Unit) {
+        cloudinaryModel.uploadImage(bitmap, name, onSuccess, onError)
     }
 }

@@ -2,6 +2,7 @@ package com.example.finalapplicationclass.model
 
 import android.content.Context
 import android.graphics.Bitmap
+import com.example.finalapplicationclass.BuildConfig
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
@@ -17,9 +18,9 @@ class CloudinaryModel {
 
     init {
         val config = mapOf(
-            "cloud_name" to "dyss3oglu",
-            "api_key" to "315995133558718",
-            "api_secret" to "EI4_K0m5V5zal_jaOmlgHY3Uimk"
+            "cloud_name" to BuildConfig.CLOUD_NAME,
+            "api_key" to BuildConfig.API_KEY,
+            "api_secret" to BuildConfig.API_SECRET
         )
 
         MyApplication.Globals.context?.let {
@@ -50,15 +51,14 @@ class CloudinaryModel {
                 ) {
                 }
 
-                override fun onSuccess(
-                    requestId: String?,
-                    resultData: Map<*, *>
-                ) {
-                    val publicUrl = resultData["secure_url"] as? String ?: ""
-                    onSuccess(
-                        publicUrl,
-                        resultData = TODO(),
-                    ) // Return the URL of the uploaded image
+                override fun onSuccess(requestId: String?, resultData: Map<*, *>?) {
+                    val url = resultData?.get("secure_url") as? String ?: ""
+
+                    if (url.isNotEmpty()) {
+                        onSuccess(url, resultData = null) // Pass both URL and resultData
+                    } else {
+                        onError("Secure URL is missing or empty") // Handle error
+                    }
                 }
 
                 override fun onError(

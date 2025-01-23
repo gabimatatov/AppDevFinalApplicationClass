@@ -31,7 +31,6 @@ class FirebaseModel {
                     }
                     callback(students)
                 }
-
                 false -> {
                     callback(listOf())
                 }
