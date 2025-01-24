@@ -21,15 +21,20 @@ import com.example.finalapplicationclass.databinding.FragmentStudentsListBinding
 import com.example.finalapplicationclass.model.Model
 import com.example.finalapplicationclass.model.Student
 
+/*
+* 1. Refactor to use Live Data
+* 2. Handle UI Events
+* 3. Refactor states to handle LOADING/LOADED
+* */
 class StudentsListFragment : Fragment() {
 
     private var adapter : StudentsRecyclerAdapter? = null
     private var binding: FragmentStudentsListBinding? = null
-    private var viewModel: StudentsListVIewModel? = null
+    private var viewModel: StudentsListViewModel? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        viewModel = ViewModelProvider(this)[StudentsListVIewModel::class.java]
+        viewModel = ViewModelProvider(this)[StudentsListViewModel::class.java]
     }
 
 
@@ -39,18 +44,20 @@ class StudentsListFragment : Fragment() {
     ): View? {
 
         binding = FragmentStudentsListBinding.inflate(inflater, container, false)
-        // TODO: set DB - Done
-        // TODO: Refactor Model to support local db - Done
-        // TODO: Refactor Fragments to work with live data - Done
-        // TODO: Add progress indicator - Done
-        // TODO: Migrate to ViewBinding - Done
-
         binding?.recyclerView?.setHasFixedSize(true)
 
         val layoutManager = LinearLayoutManager(context)
         binding?.recyclerView?.layoutManager = layoutManager
 
-        adapter = StudentsRecyclerAdapter(viewModel?.students)
+        adapter = StudentsRecyclerAdapter(viewModel?.students?.value)
+
+        getAllStudents()
+        viewModel?.students?.observe(viewLifecycleOwner) {
+            adapter?.students = it
+            adapter?.notifyDataSetChanged()
+            binding?.progressBar?.visibility = View.GONE
+        }
+
 
         adapter?.listener = object : OnItemClickListener {
             override fun onItemClick(position: Int) {
@@ -87,15 +94,16 @@ class StudentsListFragment : Fragment() {
     }
 
     private fun getAllStudents() {
+//        binding?.progressBar?.visibility = View.VISIBLE
 
-        binding?.progressBar?.visibility = View.VISIBLE
+        Model.shared.refreshStudents()
 
-        Model.shared.getAllStudents {
-            viewModel?.set(students = it)
-            adapter?.set(it)
-            adapter?.notifyDataSetChanged()
-
-            binding?.progressBar?.visibility = View.GONE
-        }
+//        Model.shared.getAllStudents {
+//            viewModel?.set(students = it)
+//            adapter?.set(it)
+//            adapter?.notifyDataSetChanged()
+//
+//            binding?.progressBar?.visibility = View.GONE
+//        }
     }
 }

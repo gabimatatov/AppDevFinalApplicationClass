@@ -6,6 +6,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.memoryCacheSettings
 import com.google.firebase.ktx.Firebase
 import com.example.finalapplicationclass.base.Constants
+import com.example.finalapplicationclass.model.utlls.extentions.toFirebaseTimestamp
 import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
 
@@ -21,21 +22,24 @@ class FirebaseModel {
         database.firestoreSettings = settings
     }
 
-    fun getAllStudents(callback: StudentsCallback) {
-        database.collection(Constants.Collections.STUDENTS).get().addOnCompleteListener {
-            when (it.isSuccessful){
-                true -> {
-                    val students: MutableList<Student> = mutableListOf()
-                    for (json in it.result) {
-                        students.add(Student.fromJSON(json.data))
+    fun getAllStudents(sinceLastUpdated: Long, callback: StudentsCallback) {
+        database.collection(Constants.Collections.STUDENTS)
+            .whereGreaterThanOrEqualTo(Student.LAST_UPDATED, sinceLastUpdated.toFirebaseTimestamp)
+            .get()
+            .addOnCompleteListener {
+                when (it.isSuccessful) {
+                    true -> {
+                        val students: MutableList<Student> = mutableListOf()
+                        for (json in it.result) {
+                            students.add(Student.fromJSON(json.data))
+                        }
+                        callback(students)
                     }
-                    callback(students)
-                }
-                false -> {
-                    callback(listOf())
+                    false -> {
+                        callback(listOf())
+                    }
                 }
             }
-        }
     }
 
     fun delete(student: Student, callback: EmptyCallback) {

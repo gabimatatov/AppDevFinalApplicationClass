@@ -1,7 +1,12 @@
 package com.example.finalapplicationclass.model
 
 import android.graphics.Bitmap
-import android.media.Image
+import android.os.Looper
+import androidx.core.os.HandlerCompat
+import androidx.lifecycle.LiveData
+import com.example.finalapplicationclass.model.dao.AppLocalDB
+import com.example.finalapplicationclass.model.dao.AppLocalDBRepository
+import java.util.concurrent.Executors
 
 typealias StudentsCallback = (List<Student>) -> Unit
 typealias EmptyCallback = () -> Unit
@@ -9,14 +14,6 @@ typealias EmptyCallback = () -> Unit
 interface GetAllStudentsListener {
     fun onCompletion(students: List<Student>)
 }
-
-/*
-1. Create FireStore model - Done
-2. Set and Get - Done
-3. Integrate FireStore - Done
-4. Integrate Students - Done
-5. Integrate Storage
-*/
 
 class Model private constructor(){
 
@@ -32,8 +29,33 @@ class Model private constructor(){
         val shared = Model()
     }
 
-    fun getAllStudents(callback: StudentsCallback) {
-        firebaseModel.getAllStudents(callback)
+    private val database: AppLocalDBRepository = AppLocalDB.database
+    private val executor = Executors.newSingleThreadExecutor()
+    private var mainHandler = HandlerCompat.createAsync(Looper.getMainLooper())
+
+    val students: LiveData<List<Student>>
+        get() = database.studentDao().getAllStudents()
+
+    fun getAllStudents(): LiveData<List<Student>> {
+        return students ?: database.studentDao().getAllStudents()
+    }
+
+    fun refreshStudents() {
+        val lastUpdated: Long = Student.lastUpdated
+        firebaseModel.getAllStudents(lastUpdated) { list ->
+            executor.execute {
+                var latestTime = lastUpdated
+                for (student in list) {
+                    database.studentDao().insertStudents(student)
+                    student.lastUpdated?.let {
+                        if (latestTime < it) {
+                            latestTime = it
+                        }
+                    }
+                }
+                Student.lastUpdated = latestTime
+            }
+        }
     }
 
     fun add(student: Student, image: Bitmap?, storage: Storage, callback: EmptyCallback) {

@@ -8,7 +8,7 @@ import com.example.finalapplicationclass.model.Student
 import com.example.finalapplicationclass.databinding.StudentListRowBinding
 
 
-class StudentsRecyclerAdapter(private var students: List<Student>?): RecyclerView.Adapter<StudentViewHolder>() {
+class StudentsRecyclerAdapter(var students: List<Student>?): RecyclerView.Adapter<StudentViewHolder>() {
 
     var listener: OnItemClickListener? = null
 
